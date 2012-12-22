@@ -29,11 +29,18 @@ NEWLIB_OPTIONS="--enable-newlib-io-long-long --enable-newlib-register-fini --dis
 if [ ! -e "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION-final-installed" ]
 then
   echo "finish building GCC"
-  mkdir --parents $INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION
+  if [ ! -e "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION" ]
+  then
+    mkdir --parents $INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION
+    cd $INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION
+    CFLAGS="$GCC_CFLAGS" CXXFLAGS="$GCC_CXXFLAGS" ../../gcc-$GCC_VERSION/configure $OPTIONS
+  fi
   cd $INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION
-  CFLAGS="$GCC_CFLAGS" CXXFLAGS="$GCC_CXXFLAGS" ../../gcc-$GCC_VERSION/configure $OPTIONS
-  make --jobs $PARALLELISM all
-  make --jobs $PARALLELISM install
+  if [ ! -e "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION-final-built" ]
+  then
+    make all
+  fi
+  make install
   touch "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION-final-installed"
 else
   echo "skipping final GCC build, because it is already installed"
