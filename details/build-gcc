@@ -16,15 +16,15 @@ NEWLIB_CCASFLAGS=${10}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD="$DIR/build"
 
-"$BUILD" "$INSTALL_DIR/src/$TARGET/binutils-$BINUTILS_VERSION" "../../binutils-$BINUTILS_VERSION/configure $OPTIONS && make --jobs $PARALLELISM all && make --jobs $PARALLELISM install"
+"$BUILD" "$INSTALL_DIR/src/$TARGET/binutils-$BINUTILS_VERSION" "../../binutils-$BINUTILS_VERSION/configure $OPTIONS && make && make install"
 
 echo "bootsrap GCC"
 GCC_CFLAGS="-fpermissive -Dffs=__builtin_ffs -v"
 GCC_CXXFLAGS="$GCC_CFLAGS"
-"$BUILD" "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION" "CFLAGS=\"$GCC_CFLAGS\" CXXFLAGS=\"$GCC_CXXFLAGS\" ../../gcc-$GCC_VERSION/configure $OPTIONS && make --jobs $PARALLELISM all-gcc && make --jobs $PARALLELISM install-gcc"
+"$BUILD" "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION" "CFLAGS=\"$GCC_CFLAGS\" CXXFLAGS=\"$GCC_CXXFLAGS\" ../../gcc-$GCC_VERSION/configure $OPTIONS && make all-gcc && make install-gcc"
 
-NEWLIB_OPTIONS="--enable-newlib-io-long-long --enable-newlib-register-fini --disable-newlib-supplied-syscalls --disable-libgloss --disable-newlib-supplied-syscalls --disable-nls"
-"$BUILD" "$INSTALL_DIR/src/$TARGET/newlib-$NEWLIB_VERSION" "../../newlib-$NEWLIB_VERSION/configure $OPTIONS $NEWLIB_OPTIONS && make CFLAGS_FOR_TARGET=\"$NEWLIB_CFLAGS_FOR_TARGET\" CCASFLAGS=\"$NEWLIB_CCASFLAGS\" --jobs $PARALLELISM all && make --jobs $PARALLELISM install"
+NEWLIB_OPTIONS="--enable-newlib-io-long-long --enable-newlib-register-fini --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls"
+"$BUILD" "$INSTALL_DIR/src/$TARGET/newlib-$NEWLIB_VERSION" "../../newlib-$NEWLIB_VERSION/configure $OPTIONS $NEWLIB_OPTIONS && make CFLAGS_FOR_TARGET=\"$NEWLIB_CFLAGS_FOR_TARGET\" CCASFLAGS=\"$NEWLIB_CCASFLAGS\" && make install"
 
 if [ ! -e "$INSTALL_DIR/src/$TARGET/gcc-$GCC_VERSION-final-installed" ]
 then
@@ -46,4 +46,4 @@ else
   echo "skipping final GCC build, because it is already installed"
 fi
 
-"$BUILD" "$INSTALL_DIR/src/$TARGET/gdb-$GDB_VERSION" "../../gdb-$GDB_VERSION/configure --prefix=$INSTALL_DIR --target=$TARGET && make --jobs $PARALLELISM all && make --jobs $PARALLELISM install"
+"$BUILD" "$INSTALL_DIR/src/$TARGET/gdb-$GDB_VERSION" "../../gdb-$GDB_VERSION/configure --prefix=$INSTALL_DIR --target=$TARGET && make all && make install"
